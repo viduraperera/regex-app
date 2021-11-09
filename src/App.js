@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+function App(){
+
+  const[data, setData] = useState(null);
+  const[print, setPrint] = useState(false); 
+
+  function getData(val){
+
+    if(!val) return;
+
+    const URL_REGEX = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+    let textSubject = val.target.value;
+    
+    return setData(textSubject.replace(URL_REGEX, (url)=>{
+
+      let hyperLink = url;
+  
+      if(!hyperLink.match('^https?:\/\/')){
+  
+        hyperLink = 'http://' + hyperLink;
+      }
+  
+      setPrint(false)
+      return `<a href="${hyperLink.toLowerCase().lastIndexOf('www.', 0) === 0 ? `//${hyperLink}` : hyperLink}">${hyperLink}</a>`
+    }));    
+
+  }
+
+  return(
+      <div>
+      {
+        print?
+          <h1>
+            <div dangerouslySetInnerHTML={{ __html: data }} />
+          </h1>  
+        :null
+      }
+      <input type="text" onChange={getData}></input>
+      <button onClick={()=>setPrint(true)}>Print Data</button>
+      </div>
   );
 }
-
 export default App;
